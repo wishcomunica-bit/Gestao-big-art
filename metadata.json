@@ -1,0 +1,6 @@
+{
+  "name": "BIG ART FOGOS — Sistema de Estoque e Orçamentos",
+  "description": "Sistema profissional de gestão de produtos, controle de estoque e elaboração de orçamentos comerciais com cálculo em tempo real e geração de PDFs para a Big Art Fogos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,1214 @@
+CRIAÇÃO DE SISTEMA WEB PROFISSIONAL — BIG ART FOGOS
+
+SISTEMA DE GESTÃO DE ESTOQUE, PRODUTOS E ORÇAMENTOS COMERCIAIS
+
+Desenvolva uma aplicação web completa, moderna, profissional, responsiva e totalmente funcional chamada BIG ART FOGOS — Sistema de Estoque e Orçamentos.
+
+O sistema será utilizado internamente pela empresa BIG ART FOGOS para cadastrar produtos, gerenciar estoque, calcular custos, elaborar orçamentos comerciais de shows pirotécnicos e vendas de produtos, registrar despesas operacionais, definir valores de execução e gerar documentos PDF profissionais.
+
+A aplicação deve funcionar perfeitamente em computadores, notebooks, tablets e celulares, com as informações sincronizadas em um banco de dados permanente.
+
+Não criar apenas uma demonstração visual ou protótipo. Desenvolver um sistema real, com todas as funcionalidades operacionais, cálculos corretos, armazenamento persistente, autenticação administrativa e geração efetiva dos documentos PDF.
+
+Todo o sistema deve estar em português brasileiro.
+
+1. IDENTIDADE VISUAL DO SISTEMA
+
+Nome da empresa: BIG ART FOGOS
+
+Logo oficial:
+https://i.postimg.cc/Hn5Qp6f2/LOGO-BIGART-PR.png
+
+Utilizar essa logo no topo do site, na tela de login, no cabeçalho dos PDFs e no rodapé dos documentos.
+
+Estilo visual desejado:
+
+- Cor predominante: branco.
+- Textos e títulos: preto.
+- Botões principais: verde, com textos brancos.
+- Cores secundárias: cinza-claro e tons neutros.
+- Aparência corporativa, moderna, sofisticada e minimalista.
+- Design semelhante a sistemas profissionais de gestão empresarial.
+- Fonte Inter ou outra fonte moderna e legível.
+- Ícones modernos, discretos e profissionais.
+- Cards organizados com cantos levemente arredondados.
+- Sombras sutis.
+- Espaçamentos equilibrados.
+- Animações leves nas interações.
+- Interface intuitiva, limpa e sem elementos desnecessários.
+
+No computador, utilizar menu lateral de navegação e área principal para as funcionalidades.
+
+No celular, adaptar a navegação e os formulários ao tamanho da tela.
+
+Não utilizar uma interface predominantemente escura.
+
+Todos os valores monetários devem utilizar o formato brasileiro, como R$ 1.250,00.
+
+Datas no formato DD/MM/AAAA.
+
+Fuso horário: America/Sao_Paulo.
+
+2. ESTRUTURA PRINCIPAL DO SITE
+
+Criar as seguintes páginas:
+
+1. Dashboard — Painel inicial.
+2. Produtos e estoque.
+3. Cadastro e edição de produtos.
+4. Criar novo orçamento.
+5. Orçamentos salvos.
+6. Visualizar e editar orçamento.
+7. Configurações da empresa.
+
+Todas as páginas devem estar interligadas e utilizar os mesmos dados salvos no banco de dados.
+
+3. DASHBOARD — PAINEL INICIAL
+
+Criar um painel administrativo com indicadores atualizados automaticamente.
+
+Exibir:
+
+- Quantidade total de produtos cadastrados.
+- Quantidade total de unidades em estoque.
+- Produtos com estoque baixo.
+- Quantidade de orçamentos criados.
+- Quantidade de orçamentos pendentes.
+- Quantidade de orçamentos aprovados.
+- Quantidade de orçamentos cancelados.
+- Valor acumulado dos orçamentos.
+
+Criar atalhos para:
+
+- Cadastrar produto.
+- Criar orçamento.
+- Consultar estoque.
+- Consultar orçamentos salvos.
+
+Organizar as informações em cards profissionais, com indicadores e visualização clara.
+
+4. CADASTRO DE PRODUTOS
+
+Criar uma página exclusiva para cadastrar, consultar, editar e excluir produtos.
+
+Permitir cadastrar uma quantidade ilimitada de produtos, sem estabelecer limite artificial de registros.
+
+Cada produto deverá conter os seguintes campos:
+
+- Código único do produto.
+- Nome do produto.
+- Categoria.
+- Descrição detalhada.
+- Valor de custo.
+- Valor de venda.
+- Quantidade em estoque.
+- Unidade de medida.
+- Quantidade mínima de estoque.
+- Status ativo ou inativo.
+- Fotos do produto.
+
+O código poderá ser informado manualmente ou gerado automaticamente pelo sistema.
+
+Não permitir códigos duplicados.
+
+Permitir criar e editar categorias personalizadas.
+
+5. CADASTRO DE FOTOS DOS PRODUTOS
+
+Cada produto poderá conter até três fotos diferentes.
+
+O sistema deverá permitir:
+
+- Enviar imagens do computador.
+- Enviar imagens do celular.
+- Visualizar miniaturas das imagens.
+- Selecionar a imagem principal.
+- Organizar a ordem das fotos.
+- Substituir imagens existentes.
+- Excluir imagens.
+- Visualizar as imagens ampliadas.
+
+As fotos devem ficar salvas permanentemente e associadas ao respectivo produto.
+
+Utilizar armazenamento persistente, como Supabase Storage.
+
+As imagens devem continuar disponíveis mesmo depois de fechar o navegador ou acessar o sistema por outro dispositivo.
+
+6. LISTAGEM E PESQUISA DE PRODUTOS
+
+Criar uma página organizada para visualizar todos os produtos cadastrados.
+
+Cada produto deverá apresentar:
+
+- Foto principal.
+- Nome.
+- Código.
+- Categoria.
+- Quantidade disponível.
+- Custo unitário.
+- Preço de venda unitário.
+- Situação do estoque.
+- Botão de visualizar.
+- Botão de editar.
+- Botão de excluir.
+
+Implementar campo de pesquisa instantânea por:
+
+- Nome do produto.
+- Código do produto.
+
+A pesquisa deve funcionar com termos parciais, sem diferenciar letras maiúsculas de minúsculas ou exigir acentuação exata.
+
+Adicionar filtros por categoria, situação do estoque e status do produto.
+
+Permitir ordenação e paginação para facilitar a navegação em grandes quantidades de registros.
+
+7. GERENCIAMENTO DE ESTOQUE
+
+O sistema deverá permitir controlar a quantidade disponível de cada produto.
+
+Funcionalidades:
+
+- Adicionar unidades ao estoque.
+- Retirar unidades.
+- Corrigir quantidades.
+- Consultar estoque disponível.
+- Identificar produtos com estoque baixo.
+- Registrar histórico de movimentações.
+
+Cada movimentação deverá registrar data, produto, quantidade, tipo de movimentação e observação opcional.
+
+REGRA IMPORTANTE:
+
+Adicionar produtos a um orçamento não pode reduzir automaticamente a quantidade do estoque.
+
+O orçamento é uma proposta comercial e não representa uma venda confirmada.
+
+8. CRIAÇÃO DE ORÇAMENTOS
+
+Criar uma página específica e completa para elaboração de orçamentos comerciais.
+
+A interface deverá permitir selecionar vários produtos, adicionar despesas, definir valores de execução e visualizar todos os cálculos em tempo real.
+
+Cada orçamento deverá conter:
+
+- Nome personalizado do orçamento.
+- Número único gerado automaticamente.
+- Data de criação editável.
+- Data de validade editável.
+- Status do orçamento.
+- Informações do cliente.
+- Informações do evento.
+- Produtos selecionados.
+- Despesas adicionais.
+- Informações da execução.
+- Valor de venda calculado.
+- Valor final negociado.
+- Observações.
+- Condições comerciais.
+
+Status disponíveis:
+
+- Rascunho.
+- Enviado.
+- Aprovado.
+- Cancelado.
+
+O número identificador deverá ser único e sequencial.
+
+9. INFORMAÇÕES DO CLIENTE
+
+Criar campos editáveis para registrar:
+
+- Nome do cliente ou razão social.
+- Nome do responsável.
+- CPF ou CNPJ, opcional.
+- Telefone ou WhatsApp.
+- E-mail.
+- Endereço, opcional.
+- Observações adicionais.
+
+Essas informações deverão ser vinculadas ao orçamento e permanecer salvas.
+
+10. INFORMAÇÕES DO EVENTO
+
+Criar uma seção exclusiva denominada INFORMAÇÕES DO EVENTO.
+
+Disponibilizar os seguintes campos:
+
+- Nome ou tipo do evento.
+- Cidade.
+- Data do evento.
+- Horário do evento.
+- Local.
+- Previsão de horário da execução.
+- Observações e informações complementares.
+
+Os campos devem permanecer editáveis mesmo depois que o orçamento estiver salvo.
+
+As informações deverão aparecer nos dois modelos de PDF, respeitando os campos preenchidos.
+
+11. ADICIONAR PRODUTOS AO ORÇAMENTO
+
+Criar uma seção de seleção dos produtos cadastrados.
+
+Disponibilizar uma barra de pesquisa que encontre os produtos pelo nome ou código.
+
+Ao selecionar um produto, preencher automaticamente:
+
+- Foto principal.
+- Nome.
+- Código.
+- Descrição.
+- Valor de custo unitário.
+- Valor de venda unitário.
+
+Permitir ao administrador:
+
+- Definir a quantidade.
+- Alterar o preço de venda especificamente para aquele orçamento.
+- Editar a descrição do produto no orçamento.
+- Adicionar novos produtos.
+- Remover produtos.
+- Duplicar linhas.
+- Substituir produtos.
+- Reorganizar a ordem dos itens.
+
+Não estabelecer limite artificial de quantidade de produtos por orçamento.
+
+O mesmo produto poderá ser utilizado em diferentes orçamentos.
+
+A alteração do preço de venda dentro de um orçamento não poderá modificar automaticamente o valor original cadastrado no estoque.
+
+12. CALCULADORA FINANCEIRA EM TEMPO REAL
+
+Implementar uma calculadora completa e dinâmica, permanentemente acessível na tela de criação e edição do orçamento.
+
+No computador, apresentar preferencialmente um painel lateral fixo.
+
+No celular, apresentar um resumo financeiro adaptado que possa ser expandido.
+
+Para cada produto, exibir:
+
+- Nome.
+- Foto em miniatura.
+- Quantidade.
+- Custo unitário.
+- Custo total.
+- Preço de venda unitário.
+- Valor total de venda.
+
+O custo total de cada produto será calculado multiplicando a quantidade pelo custo unitário.
+
+O valor de venda de cada produto será calculado multiplicando a quantidade pelo preço unitário de venda.
+
+O sistema deve atualizar instantaneamente todos os cálculos quando o administrador:
+
+- Adicionar produtos.
+- Remover produtos.
+- Alterar quantidades.
+- Editar preços.
+- Adicionar custos.
+- Remover custos.
+- Alterar valores da execução.
+- Aplicar descontos.
+- Modificar o valor final negociado.
+
+A calculadora geral deverá apresentar separadamente:
+
+- Quantidade total de itens.
+- Custo total dos produtos.
+- Venda total dos produtos.
+- Custos adicionais.
+- Custo interno da execução.
+- Valor cobrado pela execução.
+- Acréscimos comerciais opcionais.
+- Descontos comerciais.
+- Custo geral.
+- Valor de venda calculado.
+- Valor final negociado.
+- Lucro bruto estimado.
+- Margem bruta percentual.
+
+Destacar visualmente o custo geral e o valor final de venda.
+
+Todos os cálculos devem utilizar precisão monetária adequada, sem erros de arredondamento.
+
+13. CUSTOS ADICIONAIS DO ORÇAMENTO
+
+Criar uma seção denominada CUSTOS ADICIONAIS DO ORÇAMENTO.
+
+Essa seção permitirá registrar despesas internas que não estão incluídas diretamente nos produtos.
+
+Permitir adicionar quantas despesas forem necessárias.
+
+Cada despesa deverá conter:
+
+- Nome ou descrição.
+- Valor de custo.
+- Botão de editar.
+- Botão de excluir.
+
+Exemplos de despesas:
+
+- Transporte.
+- Combustível.
+- Alimentação.
+- Hospedagem.
+- Deslocamento.
+- Montagem.
+- Mão de obra.
+- Materiais auxiliares.
+- Despesas operacionais.
+- Outros custos personalizados.
+
+Todos os valores adicionais registrados como custos deverão ser somados automaticamente ao custo geral do orçamento.
+
+Esses valores também deverão ser considerados nos cálculos de lucro e margem.
+
+Criar uma opção para definir um acréscimo comercial destinado a cobrir essas despesas, permitindo especificar o valor a ser acrescentado ao preço de venda.
+
+Não somar automaticamente os mesmos custos duas vezes.
+
+Diferenciar claramente custo interno de valor comercial cobrado.
+
+REGRA OBRIGATÓRIA:
+
+Esses custos adicionais são informações administrativas confidenciais e nunca poderão aparecer no PDF do cliente.
+
+14. EXECUÇÃO DO PROJETO
+
+Criar uma seção denominada EXECUÇÃO DO PROJETO.
+
+Essa seção será utilizada principalmente nos orçamentos de shows pirotécnicos e serviços realizados pela equipe da BIG ART FOGOS.
+
+Disponibilizar os seguintes campos:
+
+VALOR COBRADO PELA EXECUÇÃO
+
+Campo numérico em reais para registrar o valor comercial cobrado pelo serviço de execução.
+
+Esse valor deverá ser acrescentado ao valor calculado de venda dos produtos.
+
+CUSTO INTERNO DA EXECUÇÃO
+
+Campo numérico separado para informar quanto a empresa gastará efetivamente para executar o serviço.
+
+Esse custo deverá ser adicionado ao custo geral do orçamento.
+
+TÍTULO DA EXECUÇÃO
+
+Campo editável para inserir o nome do serviço.
+
+Exemplo:
+Execução de Show Pirotécnico.
+
+DESCRIÇÃO DETALHADA DA EXECUÇÃO
+
+Criar um editor de texto com suporte a vários parágrafos.
+
+Permitir descrever:
+
+- Planejamento do projeto.
+- Montagem dos equipamentos.
+- Preparação técnica.
+- Equipe responsável.
+- Operação dos equipamentos.
+- Duração prevista da apresentação.
+- Efeitos pirotécnicos utilizados.
+- Procedimentos de segurança.
+- Etapas da execução.
+- Outras informações comerciais relevantes.
+
+Permitir ativar ou desativar a exibição dessa descrição no PDF do cliente.
+
+A descrição da execução poderá ser exibida integralmente no PDF comercial, mas o valor cobrado pela execução não poderá aparecer separadamente.
+
+O valor de execução deverá compor apenas o total final apresentado ao cliente.
+
+No PDF administrativo, mostrar tanto o valor cobrado quanto o custo interno da execução.
+
+15. EDIÇÃO MANUAL DO VALOR FINAL DO ORÇAMENTO
+
+Criar um campo de destaque denominado VALOR FINAL NEGOCIADO.
+
+Esse campo deverá permitir que o administrador modifique manualmente o preço final do orçamento, independentemente do valor calculado automaticamente.
+
+Exemplo:
+
+O sistema calcula inicialmente um valor total de venda de R$ 2.300,00.
+
+O administrador poderá modificar manualmente o valor final para R$ 2.500,00.
+
+O sistema deverá reconhecer R$ 2.500,00 como o valor oficial negociado.
+
+Após essa alteração, recalcular imediatamente:
+
+- Lucro bruto estimado.
+- Margem bruta percentual.
+- Diferença em relação à venda calculada.
+
+Preservar os valores de custo originais.
+
+O valor final negociado deverá ser salvo no banco de dados.
+
+Ao reabrir o orçamento, o valor negociado deverá permanecer exatamente como foi definido.
+
+Quando o orçamento não tiver um valor final manual, utilizar automaticamente a venda calculada.
+
+Quando houver um valor manual definido, não sobrescrevê-lo silenciosamente ao adicionar ou remover produtos.
+
+Nesse caso, mostrar o valor de venda recalculado e avisar que existe um valor final negociado manualmente.
+
+Disponibilizar um botão RESTAURAR VALOR CALCULADO para remover o ajuste manual e voltar ao total automático.
+
+16. REGRAS FINANCEIRAS E FÓRMULAS
+
+Definir regras claras para os cálculos.
+
+CUSTO DOS PRODUTOS
+
+Somatório dos custos unitários multiplicados pelas respectivas quantidades.
+
+CUSTOS ADICIONAIS
+
+Somatório de todas as despesas internas cadastradas.
+
+CUSTO GERAL
+
+Custo dos produtos + custos adicionais + custo interno da execução.
+
+VENDA DOS PRODUTOS
+
+Somatório dos preços de venda multiplicados pelas respectivas quantidades.
+
+VENDA CALCULADA
+
+Venda dos produtos + valor cobrado pela execução + acréscimos comerciais - descontos comerciais.
+
+VALOR FINAL NEGOCIADO
+
+Se houver valor manual, utilizar esse valor.
+
+Caso contrário, utilizar o valor de venda calculado.
+
+LUCRO BRUTO ESTIMADO
+
+Valor final negociado - custo geral.
+
+MARGEM BRUTA PERCENTUAL
+
+Lucro bruto estimado dividido pelo valor final negociado, multiplicado por 100, quando o valor final for maior que zero.
+
+Se o valor final for zero, mostrar margem não aplicável, sem provocar erro de cálculo.
+
+Evitar dupla contagem de valores.
+
+Os custos internos não devem ser somados automaticamente à venda calculada, exceto quando houver um acréscimo comercial expressamente definido para recuperá-los.
+
+Permitir aplicar descontos comerciais em reais ou percentuais.
+
+Quando um desconto estiver ativo, deixar claro seu impacto na venda calculada.
+
+Permitir editar e remover descontos.
+
+17. EXEMPLO DE FUNCIONAMENTO DA CALCULADORA
+
+Utilizar o seguinte cenário como referência para validar as fórmulas:
+
+PRODUTOS
+
+Custo total: R$ 1.200,00.
+Venda total: R$ 1.800,00.
+
+CUSTOS ADICIONAIS
+
+Transporte: R$ 150,00.
+Alimentação: R$ 80,00.
+
+EXECUÇÃO
+
+Custo interno: R$ 200,00.
+Valor cobrado: R$ 500,00.
+
+RESULTADO AUTOMÁTICO
+
+Custo geral: R$ 1.630,00.
+Venda calculada: R$ 2.300,00.
+Lucro bruto estimado: R$ 670,00.
+
+Caso o administrador edite o valor final negociado para R$ 2.500,00, atualizar os resultados para:
+
+Valor final: R$ 2.500,00.
+Custo geral: R$ 1.630,00.
+Lucro bruto estimado: R$ 870,00.
+Margem bruta estimada: 34,8%.
+
+No PDF do cliente deverá aparecer somente:
+
+VALOR TOTAL DO ORÇAMENTO: R$ 2.500,00
+
+Nenhum outro valor monetário deverá ser mostrado.
+
+18. SALVAMENTO DOS ORÇAMENTOS
+
+Todos os orçamentos devem ficar salvos permanentemente.
+
+Criar uma página denominada ORÇAMENTOS SALVOS.
+
+Nessa página, apresentar:
+
+- Número do orçamento.
+- Nome do orçamento.
+- Nome do cliente.
+- Data de criação.
+- Data de validade.
+- Status.
+- Valor final negociado.
+- Data da última modificação.
+
+Permitir pesquisar os orçamentos por:
+
+- Número.
+- Nome.
+- Cliente.
+
+Adicionar filtros por data e status.
+
+Cada orçamento deverá oferecer as seguintes opções:
+
+- Visualizar.
+- Editar.
+- Salvar alterações.
+- Salvar como novo orçamento.
+- Duplicar.
+- Arquivar.
+- Excluir com confirmação.
+- Gerar PDF interno.
+- Gerar PDF do cliente.
+
+Os dados devem permanecer armazenados mesmo depois que o usuário sair do sistema.
+
+19. EDITAR ORÇAMENTOS JÁ SALVOS
+
+Todos os orçamentos deverão permanecer editáveis a qualquer momento.
+
+Ao abrir um orçamento salvo, permitir:
+
+- Adicionar novos produtos.
+- Remover produtos.
+- Substituir produtos.
+- Alterar quantidades.
+- Editar descrições.
+- Alterar preços de venda.
+- Adicionar custos adicionais.
+- Remover custos adicionais.
+- Alterar valores de execução.
+- Editar a descrição da execução.
+- Alterar os dados do cliente.
+- Modificar informações do evento.
+- Alterar as datas.
+- Editar o nome do orçamento.
+- Modificar o valor final negociado.
+- Alterar observações e condições comerciais.
+
+Todas as alterações deverão atualizar imediatamente os cálculos financeiros.
+
+Criar dois comandos diferentes.
+
+SALVAR ALTERAÇÕES
+
+Atualiza o orçamento existente, mantendo o número original.
+
+Registrar a data e o horário da modificação.
+
+SALVAR COMO NOVO ORÇAMENTO
+
+Cria uma cópia independente do orçamento original.
+
+Gerar um novo número identificador.
+
+Copiar os dados existentes para permitir alterações.
+
+O orçamento original deverá permanecer intacto.
+
+Permitir criar quantas novas versões forem necessárias.
+
+Os orçamentos duplicados devem ficar disponíveis na página de orçamentos salvos.
+
+Permitir identificar o orçamento de origem e suas respectivas versões, quando aplicável.
+
+20. PRESERVAÇÃO DOS VALORES HISTÓRICOS
+
+Ao salvar um orçamento, registrar os produtos, quantidades, descrições, custos e preços praticados naquele momento.
+
+Se o valor de um produto for alterado posteriormente na página de cadastro, essa mudança não poderá modificar automaticamente orçamentos antigos.
+
+Permitir que o administrador altere manualmente os valores de um orçamento salvo, quando desejar.
+
+Garantir que os valores apresentados no PDF correspondam exatamente aos dados salvos na versão atual do orçamento.
+
+21. GERAÇÃO DE DOCUMENTOS PDF
+
+Implementar dois modelos independentes de PDF.
+
+Os PDFs devem ser gerados de verdade, com possibilidade de pré-visualização e download imediato.
+
+Criar botões separados:
+
+GERAR PDF INTERNO
+
+GERAR PDF DO CLIENTE
+
+Os dois documentos deverão utilizar os dados do mesmo orçamento, porém apresentar informações diferentes.
+
+A geração deve funcionar para orçamentos novos e salvos.
+
+22. PDF INTERNO — CONTROLE ADMINISTRATIVO
+
+Criar um PDF completo para controle financeiro interno da empresa.
+
+Esse documento deverá apresentar:
+
+- Logo BIG ART FOGOS.
+- Informações comerciais da empresa.
+- Número do orçamento.
+- Nome do orçamento.
+- Data de criação.
+- Data de validade.
+- Dados completos do cliente.
+- Informações do evento.
+- Relação detalhada dos produtos.
+- Código dos produtos.
+- Descrição de cada produto.
+- Quantidades.
+- Custo unitário dos produtos.
+- Custo total por produto.
+- Preço de venda unitário.
+- Venda total por produto.
+- Custo total dos produtos.
+- Venda total dos produtos.
+- Custos adicionais detalhados.
+- Despesas operacionais.
+- Custo interno da execução.
+- Valor cobrado pela execução.
+- Descrição completa da execução.
+- Acréscimos comerciais.
+- Descontos comerciais.
+- Custo geral do orçamento.
+- Valor de venda calculado.
+- Valor final negociado.
+- Lucro bruto estimado.
+- Margem bruta percentual.
+- Observações adicionais.
+
+Identificar o documento com a expressão:
+
+DOCUMENTO INTERNO — CONFIDENCIAL
+
+Esse PDF será exclusivamente administrativo.
+
+Organizar todos os valores em tabelas claras, bem alinhadas e com totais destacados.
+
+23. PDF COMERCIAL — PARA ENVIAR AO CLIENTE
+
+Criar um modelo de orçamento comercial profissional, sofisticado, elegante e pronto para envio ao cliente.
+
+REGRA MAIS IMPORTANTE:
+
+O PDF do cliente deverá apresentar somente um valor monetário: o VALOR TOTAL FINAL DO ORÇAMENTO.
+
+Não permitir exibição de preços individuais dos produtos em nenhuma circunstância.
+
+O PDF do cliente deverá conter:
+
+1. Logo da BIG ART FOGOS no cabeçalho.
+2. Nome e informações da empresa.
+3. Número do orçamento.
+4. Nome do orçamento.
+5. Data de emissão.
+6. Data de validade.
+7. Informações do cliente.
+8. Informações do evento.
+9. Cidade e local.
+10. Data e horário do evento.
+11. Previsão de horário da execução.
+12. Relação de produtos.
+13. Nome e descrição dos produtos.
+14. Quantidade de cada produto.
+15. Descrição da execução, quando habilitada.
+16. Observações e condições comerciais.
+17. Valor total final do orçamento.
+18. Rodapé com a logo, endereço, telefones e Instagram.
+
+Na relação de produtos, mostrar apenas:
+
+- Nome.
+- Descrição.
+- Quantidade.
+
+Não criar colunas de preço unitário ou subtotal.
+
+NÃO EXIBIR NO PDF DO CLIENTE:
+
+- Valor unitário dos produtos.
+- Subtotal dos produtos.
+- Valor individual de venda.
+- Valor de custo.
+- Custos adicionais.
+- Despesas internas.
+- Custo da execução.
+- Valor individual cobrado pela execução.
+- Lucro estimado.
+- Margem de lucro.
+- Acréscimos financeiros internos.
+- Descontos separados.
+- Qualquer cálculo administrativo.
+
+O único valor monetário permitido no PDF do cliente é o valor total final negociado.
+
+Não criar opção para ativar preços individuais no PDF comercial.
+
+O valor total deverá ser apresentado com destaque visual, fonte maior e excelente legibilidade.
+
+Exemplo:
+
+VALOR TOTAL DO ORÇAMENTO
+R$ 2.500,00
+
+A descrição dos produtos e da execução poderá aparecer normalmente, mas sem detalhamento financeiro.
+
+24. DESIGN PROFISSIONAL DOS PDFS
+
+Ambos os modelos de PDF deverão seguir um padrão visual profissional.
+
+Características obrigatórias:
+
+- Formato A4.
+- Orientação retrato.
+- Fundo branco.
+- Textos pretos.
+- Detalhes verdes.
+- Cabeçalho com logo.
+- Rodapé com logo em tamanho reduzido.
+- Informações da empresa organizadas.
+- Títulos bem definidos.
+- Divisórias discretas.
+- Tabelas alinhadas.
+- Espaçamento confortável.
+- Margens apropriadas para impressão.
+- Tipografia legível.
+- Destaques financeiros bem posicionados.
+
+Utilizar cabeçalho e rodapé em todas as páginas.
+
+Permitir geração automática de várias páginas quando o orçamento possuir muitos produtos.
+
+Não cortar:
+
+- Textos.
+- Descrições.
+- Linhas das tabelas.
+- Imagens.
+- Informações do evento.
+- Valores totais.
+- Rodapés.
+
+Implementar quebras de páginas inteligentes.
+
+Exibir número da página e quantidade total de páginas, quando tecnicamente possível.
+
+Permitir incluir opcionalmente a foto principal de cada produto nos PDFs, sem comprometer o alinhamento ou a legibilidade.
+
+Oferecer pré-visualização antes do download.
+
+Garantir que a logo seja corretamente carregada no PDF.
+
+Caso a URL externa da logo apresente problemas de acesso, incorporá-la como recurso local para a geração dos documentos.
+
+25. NOME DOS ARQUIVOS PDF
+
+Os arquivos devem receber nomes automáticos.
+
+PDF DO CLIENTE:
+
+BIGART_Orcamento_[NUMERO]_[CLIENTE]_CLIENTE.pdf
+
+PDF INTERNO:
+
+BIGART_Orcamento_[NUMERO]_[CLIENTE]_INTERNO.pdf
+
+Substituir automaticamente os campos pelo número e nome correspondentes.
+
+Evitar caracteres inválidos no nome do arquivo.
+
+26. INFORMAÇÕES OFICIAIS DA EMPRESA
+
+Utilizar as seguintes informações nos PDFs e nas configurações iniciais do sistema.
+
+NOME COMERCIAL
+
+BIG ART FOGOS
+
+LOGO OFICIAL
+
+https://i.postimg.cc/Hn5Qp6f2/LOGO-BIGART-PR.png
+
+ENDEREÇO
+
+Av. Dr. Licurgo Leite Filho, 444, Jardim Novo Horizonte, Muzambinho - MG, CEP 37890-000.
+
+TELEFONES
+
+(35) 99173-9385
+(35) 99143-5908
+
+INSTAGRAM OFICIAL
+
+@bigartfogos
+
+https://www.instagram.com/bigartfogos/
+
+DESCRIÇÃO INSTITUCIONAL
+
+Venda de fogos de artifício no varejo e atacado, shows pirotécnicos para réveillon, rodeios, casamentos, inaugurações e chás revelação.
+
+Essas informações deverão aparecer de maneira organizada, principalmente no cabeçalho e no rodapé dos PDFs.
+
+Evitar excesso de texto no cabeçalho.
+
+27. CONFIGURAÇÕES ADMINISTRATIVAS
+
+Criar uma página denominada CONFIGURAÇÕES DA EMPRESA.
+
+Permitir editar:
+
+- Logo.
+- Nome comercial.
+- Endereço.
+- Telefone principal.
+- Telefone secundário.
+- Instagram.
+- Descrição institucional.
+- Observações padrão.
+- Termos e condições comerciais.
+- Texto padrão de execução, quando necessário.
+
+Carregar inicialmente os dados fornecidos da BIG ART FOGOS.
+
+As alterações deverão ser salvas no banco de dados e utilizadas na geração de novos PDFs.
+
+28. TECNOLOGIAS RECOMENDADAS
+
+Desenvolver o sistema utilizando tecnologias modernas, estáveis e adequadas para aplicações comerciais.
+
+Frontend:
+
+React com TypeScript.
+
+Interface:
+
+Tailwind CSS.
+
+Componentes visuais:
+
+Componentes reutilizáveis e biblioteca de ícones moderna, como Lucide.
+
+Backend e persistência:
+
+Supabase com PostgreSQL ou arquitetura equivalente.
+
+Armazenamento de imagens:
+
+Supabase Storage ou serviço equivalente.
+
+Autenticação:
+
+Supabase Auth ou solução equivalente.
+
+PDF:
+
+Utilizar uma biblioteca confiável, como pdf-lib, jsPDF ou solução apropriada para geração de PDFs multipáginas com layouts profissionais.
+
+A tecnologia escolhida deve permitir geração real dos arquivos e preservar corretamente caracteres em português, imagens, tabelas e formatação.
+
+29. BANCO DE DADOS
+
+Criar uma estrutura organizada e persistente para armazenar:
+
+- Produtos.
+- Categorias.
+- Fotos dos produtos.
+- Movimentações de estoque.
+- Clientes.
+- Orçamentos.
+- Produtos vinculados aos orçamentos.
+- Custos adicionais.
+- Dados de execução.
+- Valores finais negociados.
+- Observações.
+- Configurações da empresa.
+- Histórico de modificações.
+- Relação entre orçamentos originais e duplicados.
+
+Definir relacionamentos corretos entre os registros.
+
+Criar identificadores únicos.
+
+Implementar validação dos dados.
+
+Garantir consistência dos valores monetários.
+
+Evitar registros duplicados por erros de envio.
+
+Garantir que a alteração de um orçamento não afete outros orçamentos independentes.
+
+Não depender exclusivamente de localStorage.
+
+As informações deverão continuar disponíveis ao acessar o sistema em outro navegador ou dispositivo autorizado.
+
+30. LOGIN E SEGURANÇA
+
+O sistema será de uso privado.
+
+Criar uma tela de login administrativo.
+
+Proteger todas as páginas internas.
+
+Não permitir acesso às informações financeiras sem autenticação.
+
+Implementar regras de segurança no banco de dados e no armazenamento.
+
+Não expor chaves secretas ou credenciais administrativas no navegador.
+
+Os PDFs internos não devem possuir links públicos de acesso irrestrito.
+
+Separar os dados utilizados pelo PDF do cliente dos dados financeiros internos.
+
+Na geração do documento comercial, enviar ao gerador somente as informações autorizadas.
+
+Garantir que valores confidenciais não sejam incluídos nos metadados, campos ocultos ou estrutura de dados do PDF comercial.
+
+31. USABILIDADE E EXPERIÊNCIA DO USUÁRIO
+
+Toda a interface deverá ser intuitiva, rápida e profissional.
+
+Implementar:
+
+- Botões totalmente funcionais.
+- Formulários organizados.
+- Campos com identificação clara.
+- Mensagens de confirmação.
+- Indicadores de carregamento.
+- Alertas de erros.
+- Validação de campos obrigatórios.
+- Confirmação antes de excluir dados.
+- Pesquisas rápidas.
+- Filtros.
+- Navegação responsiva.
+- Pré-visualização de imagens.
+- Pré-visualização de PDFs.
+- Proteção contra perda acidental de alterações não salvas.
+- Indicação clara quando um orçamento tiver alterações pendentes.
+
+Permitir cadastrar um produto e utilizá-lo imediatamente em um orçamento, sem precisar reiniciar a aplicação.
+
+Criar estados vazios amigáveis quando não houver produtos ou orçamentos cadastrados.
+
+32. BOTÕES PRINCIPAIS DO SISTEMA
+
+No cadastro de produtos:
+
+- Salvar produto.
+- Editar produto.
+- Excluir produto.
+- Adicionar foto.
+- Remover foto.
+- Atualizar estoque.
+
+Na criação de orçamentos:
+
+- Adicionar produto.
+- Remover produto.
+- Adicionar custo.
+- Remover custo.
+- Adicionar execução.
+- Aplicar desconto.
+- Restaurar valor calculado.
+- Salvar rascunho.
+- Salvar orçamento.
+- Salvar alterações.
+- Salvar como novo orçamento.
+- Visualizar orçamento.
+- Gerar PDF interno.
+- Gerar PDF do cliente.
+
+Nos orçamentos salvos:
+
+- Visualizar.
+- Editar.
+- Duplicar.
+- Arquivar.
+- Excluir.
+- Baixar PDF interno.
+- Baixar PDF do cliente.
+
+Todos os botões devem executar suas funções reais.
+
+Não criar botões meramente decorativos.
+
+33. TESTES OBRIGATÓRIOS
+
+Antes de considerar a aplicação concluída, validar os seguintes cenários:
+
+1. Cadastrar um produto com nome, código, descrição, custo, venda, estoque e três fotos.
+
+2. Fechar o navegador e confirmar que os dados permanecem salvos.
+
+3. Pesquisar produtos pelo nome e código.
+
+4. Editar um produto sem perder suas imagens.
+
+5. Adicionar diversos produtos ao mesmo orçamento.
+
+6. Alterar quantidades e verificar o recálculo instantâneo.
+
+7. Registrar custos adicionais.
+
+8. Informar o custo interno da execução.
+
+9. Informar o valor cobrado pela execução.
+
+10. Inserir uma descrição detalhada do serviço.
+
+11. Alterar manualmente o valor final negociado.
+
+12. Confirmar o cálculo correto do lucro e da margem.
+
+13. Salvar um orçamento com nome personalizado.
+
+14. Fechar e reabrir o orçamento sem perder informações.
+
+15. Editar um orçamento salvo.
+
+16. Adicionar e remover produtos em um orçamento existente.
+
+17. Salvar as alterações preservando o número original.
+
+18. Duplicar um orçamento e gerar novo número.
+
+19. Confirmar que o orçamento original permanece intacto.
+
+20. Gerar o PDF administrativo com custos, vendas, despesas e resultados financeiros.
+
+21. Gerar o PDF do cliente mostrando apenas o valor total final negociado.
+
+22. Confirmar que o PDF do cliente não possui qualquer custo ou preço individual.
+
+23. Confirmar que a descrição da execução aparece corretamente quando habilitada.
+
+24. Confirmar a presença da logo e das informações da empresa nos PDFs.
+
+25. Testar orçamentos extensos que precisam ocupar várias páginas.
+
+26. Confirmar que nenhuma tabela, descrição ou valor seja cortado.
+
+27. Confirmar que cadastrar um orçamento não reduz automaticamente o estoque.
+
+28. Confirmar que modificar o preço de um produto não altera os valores históricos dos orçamentos antigos.
+
+29. Testar a aplicação em computador e celular.
+
+30. Confirmar que usuários não autenticados não consigam acessar informações administrativas.
+
+34. REGRAS INVIOLÁVEIS
+
+REGRA 1
+
+A quantidade de produtos cadastrados e de produtos em cada orçamento não poderá possuir limite artificial.
+
+REGRA 2
+
+Cada produto poderá conter até três imagens.
+
+REGRA 3
+
+Todos os produtos, fotos e orçamentos deverão ficar salvos permanentemente no banco de dados.
+
+REGRA 4
+
+Os orçamentos deverão ser editáveis e poderão ser duplicados sem modificar os documentos originais.
+
+REGRA 5
+
+A calculadora deverá mostrar imediatamente os custos, valores de venda, despesas, execução, lucro e margem.
+
+REGRA 6
+
+O administrador poderá editar manualmente o valor final negociado.
+
+REGRA 7
+
+O sistema deverá gerar dois PDFs diferentes: interno e comercial.
+
+REGRA 8
+
+O PDF interno deverá mostrar o detalhamento financeiro completo.
+
+REGRA 9
+
+O PDF do cliente nunca poderá mostrar custos, lucros, margens, preços unitários, subtotais ou valores financeiros individuais.
+
+REGRA 10
+
+O único valor monetário permitido no PDF do cliente será o VALOR TOTAL FINAL DO ORÇAMENTO.
+
+REGRA 11
+
+O valor cobrado pela execução deverá integrar o preço final, mas nunca aparecer separadamente no PDF do cliente.
+
+REGRA 12
+
+Todos os PDFs deverão utilizar a logo e as informações oficiais da BIG ART FOGOS.
+
+REGRA 13
+
+A criação de um orçamento não poderá reduzir automaticamente o estoque.
+
+REGRA 14
+
+As informações financeiras administrativas deverão permanecer protegidas por autenticação e regras de acesso.
+
+REGRA 15
+
+A aplicação deverá funcionar realmente, e não apenas simular funcionalidades.
+
+35. ORIENTAÇÃO FINAL PARA O DESENVOLVIMENTO
+
+Desenvolva todo o sistema com foco em confiabilidade, organização, facilidade de utilização e acabamento profissional.
+
+Implemente primeiro o banco de dados, a autenticação, o cadastro de produtos e o controle de estoque.
+
+Em seguida, desenvolva a criação de orçamentos, a seleção de produtos e a calculadora financeira completa.
+
+Depois, implemente os custos adicionais, os valores de execução, a edição manual do valor final e o salvamento dos orçamentos.
+
+Em seguida, desenvolva as funcionalidades de edição, duplicação e histórico dos orçamentos.
+
+Por fim, implemente a geração dos dois modelos de PDF, garantindo que todas as regras de confidencialidade sejam respeitadas.
+
+Caso seja necessário configurar serviços externos, apresentar claramente as etapas e credenciais de integração necessárias, sem inventar dados e sem simular conexões inexistentes.
+
+Não substituir funcionalidades reais por telas ilustrativas.
+
+Não utilizar dados fictícios como se fossem informações efetivamente cadastradas.
+
+Não declarar que uma funcionalidade está concluída antes de implementar e validar seu funcionamento.
+
+O resultado final deverá ser um sistema web administrativo exclusivo para a BIG ART FOGOS, com controle de estoque, gerenciamento de produtos, cálculo de custos e lucros, elaboração de orçamentos comerciais, gerenciamento de execução de projetos, edição de propostas salvas e geração profissional de documentos PDF.
+
+PRIORIDADE ABSOLUTA:
+
+A empresa precisa ter controle total sobre os custos e valores negociados, enquanto o cliente deve receber um orçamento comercial elegante, organizado, profissional e com apenas o valor total final da proposta.
+
+Desenvolva a aplicação completa, funcional, responsiva e preparada para utilização real.
