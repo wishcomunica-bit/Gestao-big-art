@@ -1,6 +1,7 @@
 import { CompanySettings, MovementType, Product, Quote, StockMovement } from '../types';
 import {
   INITIAL_CATEGORIES,
+  INITIAL_COLORS,
   INITIAL_COMPANY_SETTINGS,
   INITIAL_MOVEMENTS,
   INITIAL_PRODUCTS,
@@ -10,6 +11,7 @@ import {
 const STORAGE_KEYS = {
   PRODUCTS: 'bigart_products_v1',
   CATEGORIES: 'bigart_categories_v1',
+  COLORS: 'bigart_colors_v1',
   MOVEMENTS: 'bigart_movements_v1',
   QUOTES: 'bigart_quotes_v1',
   SETTINGS: 'bigart_settings_v1',
@@ -32,7 +34,11 @@ export function getStoredProducts(): Product[] {
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(INITIAL_PRODUCTS));
       return INITIAL_PRODUCTS;
     }
-    return JSON.parse(raw);
+    const parsed: Product[] = JSON.parse(raw);
+    return parsed.map((p) => ({
+      ...p,
+      colors: Array.isArray(p.colors) ? p.colors : [],
+    }));
   } catch (e) {
     console.error('Error reading products from storage:', e);
     return INITIAL_PRODUCTS;
@@ -52,6 +58,9 @@ export function saveProduct(product: Partial<Product> & { name: string; code: st
       savedProduct = {
         ...products[index],
         ...product,
+        colors: Array.isArray(product.colors)
+          ? product.colors
+          : products[index].colors || [],
         updatedAt: now,
       } as Product;
       products[index] = savedProduct;
@@ -59,6 +68,7 @@ export function saveProduct(product: Partial<Product> & { name: string; code: st
       savedProduct = {
         ...product,
         id: product.id,
+        colors: Array.isArray(product.colors) ? product.colors : [],
         createdAt: now,
         updatedAt: now,
       } as Product;
@@ -73,6 +83,7 @@ export function saveProduct(product: Partial<Product> & { name: string; code: st
       category: product.category || 'Geral',
       description: product.description || '',
       videoUrl: product.videoUrl?.trim() || '',
+      colors: Array.isArray(product.colors) ? product.colors : [],
       costPrice: Number(product.costPrice) || 0,
       salePrice: Number(product.salePrice) || 0,
       stockQuantity: Number(product.stockQuantity) || 0,
@@ -189,6 +200,148 @@ export function saveCategory(categoryName: string): string[] {
     notifyChange(STORAGE_KEYS.CATEGORIES);
   }
   return categories;
+}
+
+// ---------------- COLORS ----------------
+
+export function normalizeColorName(name: string): string {
+  return (name || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
+export function getStoredColors(): string[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.COLORS);
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEYS.COLORS, JSON.stringify(INITIAL_COLORS));
+      return INITIAL_COLORS;
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    return INITIAL_COLORS;
+  }
+}
+
+export function saveColor(colorName: string): { success: boolean; colors: string[]; error?: string } {
+  const clean = colorName.trim();
+  if (!clean) {
+    return { success: false, colors: getStoredColors(), error: 'O nome da cor não pode ser vazio.' };
+  }
+
+  const colors = getStoredColors();
+  const normalizedClean = normalizeColorName(clean);
+
+  // Check case and accent-insensitive uniqueness
+  const exists = colors.some((c) => normalizeColorName(c) === normalizedClean);
+  if (exists) {
+    return {
+      success: false,
+      colors,
+      error: `A cor "${clean}" já está cadastrada no sistema.`,
+    };
+  }
+
+  colors.push(clean);
+  localStorage.setItem(STORAGE_KEYS.COLORS, JSON.stringify(colors));
+  notifyChange(STORAGE_KEYS.COLORS);
+
+  return { success: true, colors };
+}
+
+export function renameColor(
+  oldName: string,
+  newName: string
+): { success: boolean; colors: string[]; error?: string } {
+  const cleanNew = newName.trim();
+  if (!cleanNew) {
+    return { success: false, colors: getStoredColors(), error: 'O novo nome da cor não pode ser vazio.' };
+  }
+
+  const colors = getStoredColors();
+  const normOld = normalizeColorName(oldName);
+  const normNew = normalizeColorName(cleanNew);
+
+  if (normOld !== normNew && colors.some((c) => normalizeColorName(c) === normNew)) {
+    return {
+      success: false,
+      colors,
+      error: `Já existe uma cor cadastrada com o nome "${cleanNew}".`,
+    };
+  }
+
+  const colorIndex = colors.findIndex((c) => normalizeColorName(c) === normOld);
+  if (colorIndex >= 0) {
+    colors[colorIndex] = cleanNew;
+  } else {
+    colors.push(cleanNew);
+  }
+
+  localStorage.setItem(STORAGE_KEYS.COLORS, JSON.stringify(colors));
+  notifyChange(STORAGE_KEYS.COLORS);
+
+  // Cascade rename to all linked products
+  const products = getStoredProducts();
+  let updatedAny = false;
+  const updatedProducts = products.map((p) => {
+    if (p.colors && p.colors.some((c) => normalizeColorName(c) === normOld)) {
+      updatedAny = true;
+      const newColors = Array.from(
+        new Set(
+          p.colors.map((c) => (normalizeColorName(c) === normOld ? cleanNew : c))
+        )
+      );
+      return { ...p, colors: newColors };
+    }
+    return p;
+  });
+
+  if (updatedAny) {
+    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+    notifyChange(STORAGE_KEYS.PRODUCTS);
+  }
+
+  return { success: true, colors };
+}
+
+export function deleteColor(colorName: string): { success: boolean; colors: string[] } {
+  const colors = getStoredColors();
+  const normTarget = normalizeColorName(colorName);
+
+  const filteredColors = colors.filter((c) => normalizeColorName(c) !== normTarget);
+  localStorage.setItem(STORAGE_KEYS.COLORS, JSON.stringify(filteredColors));
+  notifyChange(STORAGE_KEYS.COLORS);
+
+  // Unlink color from all products without deleting products
+  const products = getStoredProducts();
+  let updatedAny = false;
+  const updatedProducts = products.map((p) => {
+    if (p.colors && p.colors.some((c) => normalizeColorName(c) === normTarget)) {
+      updatedAny = true;
+      return {
+        ...p,
+        colors: p.colors.filter((c) => normalizeColorName(c) !== normTarget),
+      };
+    }
+    return p;
+  });
+
+  if (updatedAny) {
+    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
+    notifyChange(STORAGE_KEYS.PRODUCTS);
+  }
+
+  return { success: true, colors: filteredColors };
+}
+
+export function getProductsCountByColor(colorName: string): number {
+  const normTarget = normalizeColorName(colorName);
+  const products = getStoredProducts();
+  return products.filter((p) =>
+    (p.colors || []).some((c) => normalizeColorName(c) === normTarget)
+  ).length;
 }
 
 // ---------------- STOCK MOVEMENTS ----------------

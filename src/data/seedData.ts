@@ -24,6 +24,20 @@ export const INITIAL_CATEGORIES = [
   'Efeitos de Solo e Vulcões',
 ];
 
+export const INITIAL_COLORS = [
+  'Vermelho',
+  'Verde',
+  'Azul',
+  'Amarelo',
+  'Branco',
+  'Rosa',
+  'Roxo',
+  'Laranja',
+  'Dourado',
+  'Prata',
+  'Multicolorido',
+];
+
 export const INITIAL_PRODUCTS: Product[] = [
   {
     id: 'prod-001',
@@ -31,6 +45,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     name: 'Torta Show 100 Tiros Colors & Crackers',
     category: 'Tortas e Baterias',
     description: 'Bateria pirotécnica com 100 disparos em leque, abertura de peônias vermelhas, verdes e azuis com final de estalos dourados.',
+    colors: ['Vermelho', 'Verde', 'Azul', 'Dourado'],
     costPrice: 420.00,
     salePrice: 750.00,
     stockQuantity: 18,
@@ -49,6 +64,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     name: 'Torta Espetáculo Imperial 200 Tiros',
     category: 'Tortas e Baterias',
     description: 'Bateria de alta potência com efeitos de palmeiras douradas, crisântemos prateados e cortina intensa de tiros de salva.',
+    colors: ['Dourado', 'Prata'],
     costPrice: 850.00,
     salePrice: 1450.00,
     stockQuantity: 12,

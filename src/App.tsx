@@ -20,6 +20,7 @@ import {
   getAuthSession,
   getCompanySettings,
   getStoredCategories,
+  getStoredColors,
   getStoredMovements,
   getStoredProducts,
   getStoredQuotes,
@@ -38,6 +39,7 @@ export function App() {
   const [session, setSession] = useState<AuthSession>(getAuthSession());
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [colors, setColors] = useState<string[]>([]);
   const [movements, setMovements] = useState<StockMovement[]>([]);
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [settings, setSettings] = useState<CompanySettings>(getCompanySettings());
@@ -58,6 +60,7 @@ export function App() {
   const loadData = useCallback(() => {
     setProducts(getStoredProducts());
     setCategories(getStoredCategories());
+    setColors(getStoredColors());
     setMovements(getStoredMovements());
     setQuotes(getStoredQuotes());
     setSettings(getCompanySettings());
@@ -223,6 +226,7 @@ export function App() {
             <ProductsView
               products={products}
               categories={categories}
+              colors={colors}
               onOpenNewProduct={handleOpenNewProduct}
               onEditProduct={handleEditProduct}
               onDeleteProduct={handleDeleteProduct}

@@ -9,9 +9,22 @@ import {
   Plus,
   AlertCircle,
   Eye,
+  SlidersHorizontal,
+  Edit2,
+  Check,
+  Tag,
 } from 'lucide-react';
 import { Product } from '../types';
-import { generateProductCode, getStoredCategories, saveCategory } from '../services/storage';
+import {
+  deleteColor,
+  generateProductCode,
+  getProductsCountByColor,
+  getStoredCategories,
+  getStoredColors,
+  renameColor,
+  saveCategory,
+  saveColor,
+} from '../services/storage';
 
 interface ProductFormModalProps {
   isOpen: boolean;
@@ -32,6 +45,18 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [customCategory, setCustomCategory] = useState('');
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
+
+  // Colors state
+  const [availableColors, setAvailableColors] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [isAddingColor, setIsAddingColor] = useState(false);
+  const [newColorInput, setNewColorInput] = useState('');
+  const [isManagingColors, setIsManagingColors] = useState(false);
+  const [colorError, setColorError] = useState<string | null>(null);
+  const [editingColorName, setEditingColorName] = useState<string | null>(null);
+  const [editColorNewName, setEditColorNewName] = useState('');
+  const [colorToDelete, setColorToDelete] = useState<{ name: string; count: number } | null>(null);
+
   const [description, setDescription] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [costPrice, setCostPrice] = useState<number | string>(0);
@@ -49,10 +74,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       const cats = getStoredCategories();
       setCategories(cats);
 
+      const clrs = getStoredColors();
+      setAvailableColors(clrs);
+
       if (initialProduct) {
         setCode(initialProduct.code);
         setName(initialProduct.name);
         setCategory(initialProduct.category);
+        setSelectedColors(initialProduct.colors || []);
         setDescription(initialProduct.description || '');
         setVideoUrl(initialProduct.videoUrl || '');
         setCostPrice(initialProduct.costPrice);
@@ -67,6 +96,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         setCode(generateProductCode(defaultCat));
         setName('');
         setCategory(defaultCat);
+        setSelectedColors([]);
         setDescription('');
         setVideoUrl('');
         setCostPrice(0);
@@ -79,6 +109,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       }
       setIsAddingCategory(false);
       setCustomCategory('');
+      setIsAddingColor(false);
+      setNewColorInput('');
+      setIsManagingColors(false);
+      setColorError(null);
+      setEditingColorName(null);
+      setColorToDelete(null);
       setError(null);
     }
   }, [isOpen, initialProduct]);
@@ -101,6 +137,66 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setCustomCategory('');
       setIsAddingCategory(false);
     }
+  };
+
+  // Color selection handlers
+  const handleAddSelectedColor = (colorName: string) => {
+    if (colorName && !selectedColors.includes(colorName)) {
+      setSelectedColors((prev) => [...prev, colorName]);
+    }
+  };
+
+  const handleRemoveSelectedColor = (colorName: string) => {
+    setSelectedColors((prev) => prev.filter((c) => c !== colorName));
+  };
+
+  const handleSaveNewColor = () => {
+    setColorError(null);
+    const result = saveColor(newColorInput);
+    if (!result.success) {
+      setColorError(result.error || 'Erro ao cadastrar cor.');
+      return;
+    }
+    setAvailableColors(result.colors);
+    const addedColor = newColorInput.trim();
+    if (!selectedColors.includes(addedColor)) {
+      setSelectedColors((prev) => [...prev, addedColor]);
+    }
+    setNewColorInput('');
+    setIsAddingColor(false);
+  };
+
+  // Color management handlers
+  const handleStartRename = (name: string) => {
+    setEditingColorName(name);
+    setEditColorNewName(name);
+    setColorError(null);
+  };
+
+  const handleSaveRename = (oldName: string) => {
+    setColorError(null);
+    const result = renameColor(oldName, editColorNewName);
+    if (!result.success) {
+      setColorError(result.error || 'Erro ao renomear cor.');
+      return;
+    }
+    setAvailableColors(result.colors);
+    const newNameClean = editColorNewName.trim();
+    // Update selectedColors if the renamed color was selected
+    setSelectedColors((prev) =>
+      prev.map((c) => (c === oldName ? newNameClean : c))
+    );
+    setEditingColorName(null);
+    setEditColorNewName('');
+  };
+
+  const handleConfirmDeleteColor = () => {
+    if (!colorToDelete) return;
+    const result = deleteColor(colorToDelete.name);
+    setAvailableColors(result.colors);
+    setSelectedColors((prev) => prev.filter((c) => c !== colorToDelete.name));
+    setColorToDelete(null);
+    setColorError(null);
   };
 
   // Image Upload handler (up to 3 photos)
@@ -180,6 +276,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       code: code.trim().toUpperCase(),
       name: name.trim(),
       category: category || 'Geral',
+      colors: selectedColors,
       description: description.trim(),
       videoUrl: videoUrl.trim(),
       costPrice: costNum,
@@ -310,6 +407,134 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                     Voltar
                   </button>
                 </div>
+              )}
+            </div>
+          </div>
+
+          {/* Cores do Produto (Multiple selection, + Nova, and Management) */}
+          <div className="p-3.5 bg-gray-50/80 rounded-xl border border-gray-200/90 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="block text-xs font-bold text-gray-700">
+                  Cores do Produto
+                </label>
+                <p className="text-[11px] text-gray-500">
+                  Selecione uma ou mais cores para este produto (opcional)
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setColorError(null);
+                  setIsManagingColors(true);
+                }}
+                className="text-xs text-emerald-700 hover:text-emerald-800 font-semibold flex items-center gap-1 bg-white border border-emerald-200 px-2.5 py-1 rounded-lg hover:bg-emerald-50 transition-colors shadow-2xs"
+              >
+                <SlidersHorizontal size={13} />
+                <span>Gerenciar Cores</span>
+              </button>
+            </div>
+
+            {colorError && (
+              <div className="p-2 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs flex items-center gap-1.5">
+                <AlertCircle size={14} className="shrink-0" />
+                <span>{colorError}</span>
+              </div>
+            )}
+
+            {!isAddingColor ? (
+              <div className="flex gap-2">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleAddSelectedColor(e.target.value);
+                    }
+                  }}
+                  className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                >
+                  <option value="">Selecione uma cor para adicionar...</option>
+                  {availableColors
+                    .filter((c) => !selectedColors.includes(c))
+                    .map((cor) => (
+                      <option key={cor} value={cor}>
+                        {cor}
+                      </option>
+                    ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAddingColor(true);
+                    setColorError(null);
+                  }}
+                  title="Cadastrar nova cor no sistema"
+                  className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-2.5 py-2 rounded-lg text-xs font-bold shrink-0 flex items-center gap-1 border border-emerald-200/60"
+                >
+                  <Plus size={14} />
+                  <span>Nova</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newColorInput}
+                  onChange={(e) => setNewColorInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSaveNewColor();
+                    }
+                  }}
+                  placeholder="Nome da cor (ex: Dourado, Multicolorido)"
+                  className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                />
+                <button
+                  type="button"
+                  onClick={handleSaveNewColor}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-bold"
+                >
+                  Salvar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAddingColor(false);
+                    setNewColorInput('');
+                    setColorError(null);
+                  }}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-2.5 rounded-lg text-xs font-medium"
+                >
+                  Voltar
+                </button>
+              </div>
+            )}
+
+            {/* Selected colors tag list */}
+            <div className="flex flex-wrap items-center gap-1.5 min-h-[34px] p-2 bg-white border border-gray-200 rounded-lg">
+              {selectedColors.length === 0 ? (
+                <span className="text-xs text-gray-400 italic">
+                  Nenhuma cor selecionada ainda. Escolha no menu acima.
+                </span>
+              ) : (
+                selectedColors.map((cor) => (
+                  <span
+                    key={cor}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-900 border border-emerald-200 rounded-md text-xs font-medium"
+                  >
+                    <Tag size={11} className="text-emerald-600 shrink-0" />
+                    <span>{cor}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSelectedColor(cor)}
+                      className="text-emerald-700 hover:text-red-600 p-0.5 rounded transition-colors"
+                      title={`Remover cor ${cor}`}
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))
               )}
             </div>
           </div>
@@ -582,6 +807,255 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               alt="Ampliação"
               className="max-h-[80vh] w-auto object-contain rounded-lg"
             />
+          </div>
+        </div>
+      )}
+
+      {/* Gerenciar Cores Modal */}
+      {isManagingColors && (
+        <div className="fixed inset-0 z-60 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-lg overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+              <div>
+                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                  <SlidersHorizontal size={18} className="text-emerald-700" />
+                  <span>Gerenciar Cores dos Produtos</span>
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Cadastre novas cores, renomeie ou exclua cores existentes
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsManagingColors(false);
+                  setEditingColorName(null);
+                  setColorError(null);
+                }}
+                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 overflow-y-auto flex-1">
+              {colorError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-center gap-2">
+                  <AlertCircle size={16} className="shrink-0" />
+                  <span>{colorError}</span>
+                </div>
+              )}
+
+              {/* Add new color input */}
+              <div className="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100">
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Cadastrar Nova Cor
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newColorInput}
+                    onChange={(e) => setNewColorInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleSaveNewColor();
+                      }
+                    }}
+                    placeholder="Nome da cor (ex: Violeta, Dourado Especial)"
+                    className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveNewColor}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 shadow-xs"
+                  >
+                    <Plus size={14} />
+                    <span>Adicionar</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Registered Colors List */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-gray-700">
+                    Cores Cadastradas ({availableColors.length})
+                  </span>
+                  <span className="text-[11px] text-gray-500">
+                    Clique no lápis para renomear ou na lixeira para excluir
+                  </span>
+                </div>
+
+                <div className="border border-gray-200 rounded-xl divide-y divide-gray-100 bg-white max-h-64 overflow-y-auto">
+                  {availableColors.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-gray-400">
+                      Nenhuma cor cadastrada no sistema.
+                    </div>
+                  ) : (
+                    availableColors.map((cor) => {
+                      const count = getProductsCountByColor(cor);
+                      const isEditing = editingColorName === cor;
+
+                      return (
+                        <div
+                          key={cor}
+                          className="px-4 py-2.5 flex items-center justify-between gap-2 hover:bg-gray-50/80 transition-colors"
+                        >
+                          {isEditing ? (
+                            <div className="flex-1 flex gap-2 items-center">
+                              <input
+                                type="text"
+                                value={editColorNewName}
+                                onChange={(e) => setEditColorNewName(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleSaveRename(cor);
+                                  } else if (e.key === 'Escape') {
+                                    setEditingColorName(null);
+                                  }
+                                }}
+                                autoFocus
+                                className="flex-1 bg-white border border-emerald-500 rounded-lg px-2.5 py-1 text-xs focus:ring-2 focus:ring-emerald-500"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleSaveRename(cor)}
+                                className="bg-emerald-600 text-white p-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700"
+                                title="Salvar alteração"
+                              >
+                                <Check size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingColorName(null)}
+                                className="bg-gray-200 text-gray-600 p-1.5 rounded-lg text-xs hover:bg-gray-300"
+                                title="Cancelar"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="text-xs font-semibold text-gray-800 truncate">
+                                  {cor}
+                                </span>
+                                <span
+                                  className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                                    count > 0
+                                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                      : 'bg-gray-100 text-gray-500'
+                                  }`}
+                                >
+                                  {count} {count === 1 ? 'produto' : 'produtos'}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-1 shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => handleStartRename(cor)}
+                                  title={`Renomear cor ${cor}`}
+                                  className="p-1.5 text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                                >
+                                  <Edit2 size={13} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setColorToDelete({
+                                      name: cor,
+                                      count,
+                                    })
+                                  }
+                                  title={`Excluir cor ${cor}`}
+                                  className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="px-6 py-3 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsManagingColors(false);
+                  setEditingColorName(null);
+                  setColorError(null);
+                }}
+                className="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg text-xs font-bold transition-colors"
+              >
+                Concluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Color Confirmation Dialog */}
+      {colorToDelete && (
+        <div className="fixed inset-0 z-70 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-md overflow-hidden p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                <Trash2 size={20} />
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-gray-900">
+                  Excluir Cor Cadastrada?
+                </h4>
+                <p className="text-xs text-gray-500">
+                  Esta ação não poderá ser desfeita.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 space-y-1">
+              <p>
+                Deseja realmente excluir a cor{' '}
+                <strong className="font-bold">"{colorToDelete.name}"</strong>?
+              </p>
+              {colorToDelete.count > 0 ? (
+                <p className="text-[11px] text-amber-800">
+                  Atenção: Esta cor está vinculada a{' '}
+                  <strong>{colorToDelete.count} produto(s)</strong>. Ao confirmar,
+                  a cor será apenas desvinculada desses produtos — nenhum produto
+                  será excluído.
+                </p>
+              ) : (
+                <p className="text-[11px] text-gray-500">
+                  Nenhum produto cadastrado utiliza esta cor atualmente.
+                </p>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => setColorToDelete(null)}
+                className="px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteColor}
+                className="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-xs transition-colors"
+              >
+                Sim, Excluir Cor
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -13,13 +13,16 @@ import {
   XCircle,
   Video,
   ExternalLink,
+  Tag,
 } from 'lucide-react';
 import { Product } from '../types';
 import { formatCurrencyBRL } from '../utils/calculator';
+import { getStoredColors } from '../services/storage';
 
 interface ProductsViewProps {
   products: Product[];
   categories: string[];
+  colors?: string[];
   onOpenNewProduct: () => void;
   onEditProduct: (product: Product) => void;
   onDeleteProduct: (productId: string) => void;
@@ -29,6 +32,7 @@ interface ProductsViewProps {
 export const ProductsView: React.FC<ProductsViewProps> = ({
   products,
   categories,
+  colors,
   onOpenNewProduct,
   onEditProduct,
   onDeleteProduct,
@@ -36,11 +40,14 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [selectedColor, setSelectedColor] = useState('ALL');
   const [stockFilter, setStockFilter] = useState<'ALL' | 'NORMAL' | 'LOW' | 'ZERO'>('ALL');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
   const [viewProduct, setViewProduct] = useState<Product | null>(null);
   const [deleteConfirmProduct, setDeleteConfirmProduct] = useState<Product | null>(null);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
+
+  const systemColors = colors || getStoredColors();
 
   // Normalization for search (ignoring case, spaces, and accents)
   const normalize = (text: string) =>
@@ -63,6 +70,11 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
       // Category filter
       const matchesCategory = selectedCategory === 'ALL' || p.category === selectedCategory;
 
+      // Color filter
+      const matchesColor =
+        selectedColor === 'ALL' ||
+        (Array.isArray(p.colors) && p.colors.includes(selectedColor));
+
       // Status filter
       const matchesStatus =
         statusFilter === 'ALL' ||
@@ -82,9 +94,9 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
         matchesStock = stock > minStock;
       }
 
-      return matchesSearch && matchesCategory && matchesStatus && matchesStock;
+      return matchesSearch && matchesCategory && matchesColor && matchesStatus && matchesStock;
     });
-  }, [products, searchTerm, selectedCategory, statusFilter, stockFilter]);
+  }, [products, searchTerm, selectedCategory, selectedColor, statusFilter, stockFilter]);
 
   const confirmDelete = () => {
     if (deleteConfirmProduct) {
@@ -117,9 +129,9 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
 
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-xs space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3">
           {/* Instant Search input */}
-          <div className="md:col-span-5 relative">
+          <div className="sm:col-span-2 md:col-span-4 relative">
             <Search size={18} className="absolute left-3.5 top-3 text-gray-400" />
             <input
               type="text"
@@ -139,7 +151,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
           </div>
 
           {/* Category Filter */}
-          <div className="md:col-span-3">
+          <div className="sm:col-span-1 md:col-span-2">
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -154,8 +166,24 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
             </select>
           </div>
 
+          {/* Color Filter (Todas as Cores) */}
+          <div className="sm:col-span-1 md:col-span-2">
+            <select
+              value={selectedColor}
+              onChange={(e) => setSelectedColor(e.target.value)}
+              className="w-full py-2 px-3 text-sm bg-gray-50/60 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-emerald-500"
+            >
+              <option value="ALL">Todas as Cores</option>
+              {systemColors.map((cor) => (
+                <option key={cor} value={cor}>
+                  {cor}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Stock Condition */}
-          <div className="md:col-span-2">
+          <div className="sm:col-span-1 md:col-span-2">
             <select
               value={stockFilter}
               onChange={(e) => setStockFilter(e.target.value as any)}
@@ -169,7 +197,7 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
           </div>
 
           {/* Status Filter */}
-          <div className="md:col-span-2">
+          <div className="sm:col-span-1 md:col-span-2">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
@@ -187,11 +215,12 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
           <span>
             Exibindo <strong>{filteredProducts.length}</strong> de {products.length} produtos cadastrados
           </span>
-          {(searchTerm || selectedCategory !== 'ALL' || stockFilter !== 'ALL' || statusFilter !== 'ALL') && (
+          {(searchTerm || selectedCategory !== 'ALL' || selectedColor !== 'ALL' || stockFilter !== 'ALL' || statusFilter !== 'ALL') && (
             <button
               onClick={() => {
                 setSearchTerm('');
                 setSelectedCategory('ALL');
+                setSelectedColor('ALL');
                 setStockFilter('ALL');
                 setStatusFilter('ALL');
               }}
@@ -274,6 +303,18 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
                       <td className="px-4 py-3 max-w-xs">
                         <div className="font-bold text-gray-900 line-clamp-1">{p.name}</div>
                         <div className="text-xs text-gray-500">{p.category}</div>
+                        {p.colors && p.colors.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {p.colors.map((cor) => (
+                              <span
+                                key={cor}
+                                className="inline-block text-[10px] px-1.5 py-0.5 bg-emerald-50 text-emerald-800 rounded border border-emerald-200/70 font-medium"
+                              >
+                                {cor}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </td>
 
                       {/* Stock Quantity */}
@@ -439,6 +480,25 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
                   </div>
                 </div>
               </div>
+
+              {/* Cores disponíveis (only if product has colors) */}
+              {viewProduct.colors && viewProduct.colors.length > 0 && (
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-150">
+                  <span className="text-xs font-bold text-gray-700 block mb-1.5">
+                    Cores disponíveis:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {viewProduct.colors.map((color) => (
+                      <span
+                        key={color}
+                        className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-white text-emerald-900 border border-emerald-300 shadow-2xs"
+                      >
+                        {color}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Description */}
               {viewProduct.description && (

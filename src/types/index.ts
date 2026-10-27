@@ -5,6 +5,7 @@ export interface Product {
   category: string;
   description: string;
   videoUrl?: string;
+  colors?: string[];
   costPrice: number;
   salePrice: number;
   stockQuantity: number;
