@@ -72,6 +72,7 @@ export function saveProduct(product: Partial<Product> & { name: string; code: st
       name: product.name.trim(),
       category: product.category || 'Geral',
       description: product.description || '',
+      videoUrl: product.videoUrl?.trim() || '',
       costPrice: Number(product.costPrice) || 0,
       salePrice: Number(product.salePrice) || 0,
       stockQuantity: Number(product.stockQuantity) || 0,
@@ -115,23 +116,51 @@ export function deleteProduct(productId: string): boolean {
   return false;
 }
 
+export function getCategoryPrefix(categoryName?: string): string {
+  if (!categoryName) return 'PR';
+  // Normalize accents (e.g. "Fumaças" -> "Fumacas", "Chá" -> "Cha")
+  const normalized = categoryName
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+  // Extract alphanumeric letters only
+  const lettersOnly = normalized.replace(/[^a-zA-Z]/g, '');
+  if (lettersOnly.length >= 2) {
+    return lettersOnly.slice(0, 2).toUpperCase();
+  } else if (lettersOnly.length === 1) {
+    return (lettersOnly + 'X').toUpperCase();
+  }
+  return 'PR';
+}
+
 export function generateProductCode(category?: string): string {
   const products = getStoredProducts();
-  const prefix = category?.includes('Torta')
-    ? 'BAF-TR'
-    : category?.includes('Morteiro')
-    ? 'BAF-MOR'
-    : category?.includes('Cascata')
-    ? 'BAF-CSC'
-    : category?.includes('Revelação')
-    ? 'BAF-REV'
-    : 'BAF-PROD';
+  const prefix = getCategoryPrefix(category);
 
-  const randomNum = Math.floor(100 + Math.random() * 900);
-  let candidate = `${prefix}-${randomNum}`;
-  while (products.some((p) => p.code.toUpperCase() === candidate)) {
-    candidate = `${prefix}-${Math.floor(100 + Math.random() * 900)}`;
+  // Look for existing products with code matching prefix + '-' + digits
+  const regex = new RegExp(`^${prefix}-(\\d+)$`, 'i');
+  let maxSeq = 0;
+
+  for (const p of products) {
+    const code = (p.code || '').trim();
+    const match = code.match(regex);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      if (!isNaN(num) && num > maxSeq) {
+        maxSeq = num;
+      }
+    }
   }
+
+  let nextSeq = maxSeq + 1;
+  let candidate = `${prefix}-${String(nextSeq).padStart(4, '0')}`;
+
+  // Ensure absolute uniqueness across all products (including custom entered codes)
+  while (products.some((p) => p.code.toUpperCase() === candidate)) {
+    nextSeq++;
+    candidate = `${prefix}-${String(nextSeq).padStart(4, '0')}`;
+  }
+
   return candidate;
 }
 

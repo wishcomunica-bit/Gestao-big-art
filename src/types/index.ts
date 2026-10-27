@@ -4,6 +4,7 @@ export interface Product {
   name: string;
   category: string;
   description: string;
+  videoUrl?: string;
   costPrice: number;
   salePrice: number;
   stockQuantity: number;

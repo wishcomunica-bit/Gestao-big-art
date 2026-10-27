@@ -11,6 +11,8 @@ import {
   Star,
   CheckCircle2,
   XCircle,
+  Video,
+  ExternalLink,
 } from 'lucide-react';
 import { Product } from '../types';
 import { formatCurrencyBRL } from '../utils/calculator';
@@ -445,6 +447,26 @@ export const ProductsView: React.FC<ProductsViewProps> = ({
                   <p className="text-xs text-gray-600 mt-1 whitespace-pre-line bg-white p-3 rounded-lg border border-gray-200">
                     {viewProduct.description}
                   </p>
+                </div>
+              )}
+
+              {/* Video Button (only if product has videoUrl) */}
+              {viewProduct.videoUrl && viewProduct.videoUrl.trim() !== '' && (
+                <div className="pt-1">
+                  <a
+                    href={
+                      viewProduct.videoUrl.startsWith('http://') || viewProduct.videoUrl.startsWith('https://')
+                        ? viewProduct.videoUrl
+                        : `https://${viewProduct.videoUrl}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-colors shadow-xs"
+                  >
+                    <Video size={16} />
+                    <span>Assistir Vídeo do Produto</span>
+                    <ExternalLink size={13} className="opacity-80" />
+                  </a>
                 </div>
               )}
             </div>

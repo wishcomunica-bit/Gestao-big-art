@@ -33,6 +33,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [description, setDescription] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
   const [costPrice, setCostPrice] = useState<number | string>(0);
   const [salePrice, setSalePrice] = useState<number | string>(0);
   const [stockQuantity, setStockQuantity] = useState<number | string>(0);
@@ -53,6 +54,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         setName(initialProduct.name);
         setCategory(initialProduct.category);
         setDescription(initialProduct.description || '');
+        setVideoUrl(initialProduct.videoUrl || '');
         setCostPrice(initialProduct.costPrice);
         setSalePrice(initialProduct.salePrice);
         setStockQuantity(initialProduct.stockQuantity);
@@ -66,6 +68,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         setName('');
         setCategory(defaultCat);
         setDescription('');
+        setVideoUrl('');
         setCostPrice(0);
         setSalePrice(0);
         setStockQuantity(10);
@@ -90,7 +93,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     if (customCategory.trim()) {
       const updated = saveCategory(customCategory.trim());
       setCategories(updated);
-      setCategory(customCategory.trim());
+      const newCat = customCategory.trim();
+      setCategory(newCat);
+      if (!initialProduct) {
+        setCode(generateProductCode(newCat));
+      }
       setCustomCategory('');
       setIsAddingCategory(false);
     }
@@ -174,6 +181,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       name: name.trim(),
       category: category || 'Geral',
       description: description.trim(),
+      videoUrl: videoUrl.trim(),
       costPrice: costNum,
       salePrice: saleNum,
       stockQuantity: stockNum,
@@ -253,7 +261,13 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 <div className="flex gap-2">
                   <select
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onChange={(e) => {
+                      const newCat = e.target.value;
+                      setCategory(newCat);
+                      if (!initialProduct) {
+                        setCode(generateProductCode(newCat));
+                      }
+                    }}
                     className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   >
                     {categories.map((cat) => (
@@ -325,6 +339,20 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Descreva efeitos, cores, calibre, duração, altura dos tiros e recomendações de segurança..."
+              className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            />
+          </div>
+
+          {/* Video Link */}
+          <div>
+            <label className="block text-xs font-bold text-gray-700 mb-1">
+              Link do Vídeo do Produto
+            </label>
+            <input
+              type="text"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              placeholder="Cole aqui o link do vídeo do produto..."
               className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             />
           </div>
